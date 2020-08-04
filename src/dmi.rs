@@ -43,7 +43,7 @@ impl Dmi<'_> {
         }
     }
 
-    fn extract_metadata<'a>(data: &Vec<u8>) -> Result<DmiMetadata<'a>, &'a str> {
+    fn extract_metadata<'a>(data: &[u8]) -> Result<DmiMetadata<'a>, &'a str> {
         let data_len = data.len() as u64;
 
         // Read the PNG data
@@ -91,14 +91,14 @@ impl Dmi<'_> {
                     }
                 }
 
-                if !maybe_desc_raw.is_none() {
-                    maybe_metadata_readable = Some(Cow::from(maybe_desc_raw.unwrap()));
+                if let Some(x) = maybe_desc_raw {
+                    maybe_metadata_readable = Some(x);
                     break;
                 }
             }
 
             match maybe_metadata_readable {
-                Some(x) => Ok(Dmi::parse_metadata(std::str::from_utf8(&x[..]).unwrap())),
+                Some(x) => Ok(Dmi::parse_metadata(std::str::from_utf8(&x).unwrap())),
                 None => Err("Dmi::extract_metadata metadata_raw not found")
             }
         };

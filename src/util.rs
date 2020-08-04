@@ -52,7 +52,7 @@ macro_rules! export_fn {
     };
 }
 
-pub unsafe extern "C" fn jsargs_str<'a>(env: napi_env, arg: napi_value) -> String {
+pub unsafe extern "C" fn jsargs_str(env: napi_env, arg: napi_value) -> String {
     let mut len: u64 = 0;
     napi_get_value_string_utf8(env, arg, ptr::null_mut(), 0, &mut len);
     if len > 0 {

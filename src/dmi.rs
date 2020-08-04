@@ -27,10 +27,12 @@ struct Dmi<'a> {
     icon_states: Vec<&'a IconState<'a>>
 } 
 
+type DmiMetadata<'a> = (&'a str, u16, u16, Vec<&'a IconState<'a>>);
+
 impl Dmi<'_> {
     pub fn new<'a>(data: Vec<u8>) -> Dmi<'a> {
         println!("Extracting meta data...");
-        let metadata = Dmi::extract_metadata(&data);
+        let metadata: DmiMetadata<'a> = Dmi::extract_metadata(&data).expect("Dmi::new metadata failed");
 
         // TODO: use metadata
         Dmi {
@@ -41,11 +43,11 @@ impl Dmi<'_> {
         }
     }
 
-    fn extract_metadata<'a>(data: &Vec<u8>) -> Result<(&'a str, u16, u16, Vec<&'a IconState<'a>>), &'a str> {
+    fn extract_metadata<'a>(data: &Vec<u8>) -> Result<DmiMetadata<'a>, &'a str> {
         let data_len = data.len() as u64;
 
         // Read the PNG data
-        let metadata_result: std::result::Result<(&'a str, u16, u16, Vec<&'a IconState<'a>>), &'a str> = {
+        let metadata_result: std::result::Result<DmiMetadata<'a>, &'a str> = {
             use std::borrow::Cow;
             use std::io::{Cursor, Read};
             use byteorder::{BigEndian, ReadBytesExt};
@@ -107,7 +109,7 @@ impl Dmi<'_> {
         }
     }
 
-    fn parse_metadata<'a>(metadata_raw: &str) -> (&'a str, u16, u16, Vec<&'a IconState<'a>>) {
+    fn parse_metadata<'a>(metadata_raw: &str) -> DmiMetadata<'a> {
         let mut version: &'a str = "";
         let mut width: u16 = 0;
         let mut height: u16 = 0;

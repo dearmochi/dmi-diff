@@ -2,6 +2,7 @@
 // TODO: diff from 2 streams (maybe mix and match)
 // TODO: proper nodejs exports
 // TODO: document
+// TODO? verbose mode
 
 #[macro_use]
 mod util;
